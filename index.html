@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HYXI Solar Savings Calculator</title>
+  <title>HYXiPOWER Solar Savings Calculator</title>
   <style>
     :root {
       --bg-color: #f7f9fa;
@@ -56,7 +56,7 @@
       color: var(--text-muted);
       font-size: 0.95rem;
       line-height: 1.45;
-      max-width: 720px;
+      max-width: 760px;
     }
 
     .calc-grid {
@@ -88,50 +88,69 @@
       display: block;
     }
 
-    /* Property Type Selector */
+    /* Property Types Grid */
     .property-types {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
+      gap: 10px;
       margin-bottom: 24px;
     }
 
-    .type-btn {
+    .prop-btn {
       background: #f4f6f8;
       border: 2px solid transparent;
       border-radius: 16px;
-      padding: 14px 8px;
+      padding: 14px 6px 12px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
       cursor: pointer;
       transition: all 0.2s ease;
+      text-align: center;
     }
 
-    .type-btn:hover {
+    .prop-btn:hover {
       background: #ebeef2;
     }
 
-    .type-btn.active {
+    .prop-btn.active {
       border-color: var(--accent-green);
       background: #effaf2;
     }
 
-    .type-btn svg {
-      width: 28px;
-      height: 28px;
+    .prop-btn svg {
+      width: 26px;
+      height: 26px;
       fill: var(--accent-green);
+      flex-shrink: 0;
     }
 
-    .type-btn span {
+    .prop-btn .prop-title {
       font-size: 0.8rem;
-      font-weight: 600;
-      color: #333;
+      font-weight: 700;
+      color: #222;
+      line-height: 1.2;
     }
 
-    /* Radio Bill Milestones */
+    /* Usable roof sqm label */
+    .prop-btn .sqm-tag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--accent-green);
+      background: rgba(27, 163, 69, 0.1);
+      padding: 2px 6px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .prop-btn.active .sqm-tag {
+      background: #1ba345;
+      color: #ffffff;
+    }
+
+    /* Radio Milestones */
     .radio-bar {
       display: flex;
       justify-content: space-between;
@@ -146,7 +165,6 @@
       border: 2px solid #8e95a0;
       background: transparent;
       cursor: pointer;
-      position: relative;
     }
 
     .radio-dot.selected {
@@ -154,7 +172,7 @@
       background: var(--accent-green);
     }
 
-    /* Bill Slider */
+    /* Range Slider */
     .slider-container {
       margin-bottom: 24px;
     }
@@ -210,8 +228,8 @@
     }
 
     .sku-img-wrapper {
-      width: 90px;
-      height: 70px;
+      width: 85px;
+      height: 72px;
       background: #ffffff;
       border-radius: 10px;
       display: flex;
@@ -219,11 +237,12 @@
       justify-content: center;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
       border: 1px solid #e5e8ec;
+      flex-shrink: 0;
     }
 
     .sku-img-wrapper svg {
-      width: 48px;
-      height: 48px;
+      width: 44px;
+      height: 44px;
     }
 
     .sku-details h4 {
@@ -236,7 +255,7 @@
     .sku-details p {
       font-size: 0.75rem;
       color: var(--text-muted);
-      line-height: 1.3;
+      line-height: 1.35;
     }
 
     .sku-details .badge {
@@ -250,7 +269,7 @@
       font-weight: 600;
     }
 
-    /* Form Dropdowns */
+    /* Dropdowns */
     .input-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -280,11 +299,6 @@
       background-position: right 14px center;
     }
 
-    .custom-select:focus {
-      border-color: var(--accent-green);
-    }
-
-    /* Action CTA Button */
     .cta-btn {
       width: 100%;
       background: var(--accent-green);
@@ -302,7 +316,7 @@
       background: var(--accent-green-hover);
     }
 
-    /* Right Metrics Display Cards */
+    /* Right Display Cards */
     .metrics-col {
       display: flex;
       flex-direction: column;
@@ -368,8 +382,7 @@
     <div class="calc-header">
       <h1>Solar Savings Calculator</h1>
       <p>
-        Calculate your solar potential in seconds. Simply enter your utility details and
-        average monthly utility bill to see your projected Meralco bill reduction, generation, and system scale.
+        Calculate your solar potential in seconds. Simply select your property type and average monthly utility bill to see your projected Meralco bill reduction, yield, and recommended HYXI inverter setup.
       </p>
     </div>
 
@@ -378,41 +391,49 @@
       <div class="form-card">
         <label class="section-label">Property Type*</label>
         <div class="property-types">
-          <button type="button" class="type-btn active" data-type="small">
+          <!-- Small Home -->
+          <button type="button" class="prop-btn active" data-type="small">
             <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            <span>Small Home</span>
+            <span class="prop-title">Small Home</span>
+            <span class="sqm-tag">15 - 35 sqm</span>
           </button>
-          <button type="button" class="type-btn" data-type="big">
+          <!-- Big Home -->
+          <button type="button" class="prop-btn" data-type="big">
             <svg viewBox="0 0 24 24"><path d="M12 3L2 12h3v8h14v-8h3L12 3zm4 15h-3v-4h-2v4H8v-6h8v6z"/></svg>
-            <span>Big Home</span>
+            <span class="prop-title">Big Home</span>
+            <span class="sqm-tag">40 - 90 sqm</span>
           </button>
-          <button type="button" class="type-btn" data-type="apartment">
+          <!-- Apartment -->
+          <button type="button" class="prop-btn" data-type="apartment">
             <svg viewBox="0 0 24 24"><path d="M17 11V3H7v4H3v14h8v-4h2v4h8V11h-4zM7 19H5v-2h2v2zm0-4H5v-2h2v2zm0-4H5V9h2v2zm4 4H9v-2h2v2zm0-4H9V9h2v2zm0-4H9V5h2v2zm4 8h-2v-2h2v2zm0-4h-2V9h2v2zm0-4h-2V5h2v2zm4 12h-2v-2h2v2zm0-4h-2v-2h2v2z"/></svg>
-            <span>Apartment</span>
+            <span class="prop-title">Apartment</span>
+            <span class="sqm-tag">10 - 25 sqm</span>
           </button>
-          <button type="button" class="type-btn" data-type="enterprise">
+          <!-- Enterprise -->
+          <button type="button" class="prop-btn" data-type="enterprise">
             <svg viewBox="0 0 24 24"><path d="M4 2v20h16V2H4zm4 4h2v2H8V6zm0 4h2v2H8v-2zm0 4h2v2H8v-2zm0 4h2v2H8v-2zm8 0h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V6h2v2zm0 4h-2v-2h2v2z"/></svg>
-            <span>Enterprise</span>
+            <span class="prop-title">Enterprise</span>
+            <span class="sqm-tag">100+ sqm</span>
           </button>
         </div>
 
-        <label class="section-label" id="billLabel">Average Monthly Electricity Bill*: PHP 25,000</label>
+        <label class="section-label" id="billLabel">Average Monthly Electricity Bill*: PHP 15,000</label>
         <div class="radio-bar">
-          <div class="radio-dot" data-val="1000"></div>
+          <div class="radio-dot" data-val="5000"></div>
           <div class="radio-dot" data-val="15000"></div>
           <div class="radio-dot" data-val="30000"></div>
           <div class="radio-dot" data-val="50000"></div>
         </div>
 
         <div class="slider-container">
-          <input type="range" class="range-input" id="billRange" min="1000" max="50000" step="500" value="25000" />
+          <input type="range" class="range-input" id="billRange" min="2000" max="60000" step="500" value="15000" />
           <div class="range-bounds">
-            <span>PHP 1,000</span>
-            <span>PHP 50,000</span>
+            <span>PHP 2,000</span>
+            <span>PHP 60,000</span>
           </div>
         </div>
 
-        <label class="section-label">Preferred SKU</label>
+        <label class="section-label">Preferred SKU & Inverter Pairing</label>
         <div class="sku-card">
           <div class="sku-img-wrapper">
             <svg viewBox="0 0 100 100" fill="none">
@@ -423,38 +444,38 @@
           </div>
           <div class="sku-details">
             <h4 id="skuTitle">H6K/8K-LS</h4>
-            <p id="skuDesc">HYXI residential low-voltage hybrid inverter</p>
-            <span class="badge">60V Low Startup | 18A High Current</span>
+            <p id="skuDesc">HYXI Residential Low-Voltage Hybrid Inverter</p>
+            <span class="badge" id="skuBadge">60V Low Startup | 18A High Current</span>
           </div>
         </div>
 
         <div class="select-group" style="margin-bottom: 14px;">
-          <label class="section-label" style="margin-bottom: 0;">Location*</label>
+          <label class="section-label" style="margin-bottom: 0;">Location / Grid Utility*</label>
           <select class="custom-select" id="locationSelect">
-            <option value="1.0">Metro Manila (Meralco Grid)</option>
-            <option value="1.02">Central Luzon (Bulacan / Pampanga)</option>
-            <option value="0.98">Calabarzon (Cavite / Laguna / Batangas)</option>
-            <option value="1.05">North Luzon</option>
+            <option value="1.0">Metro Manila (Meralco Main)</option>
+            <option value="1.03">Central Luzon (Bulacan / Pampanga)</option>
+            <option value="0.97">CALABARZON (Cavite / Laguna / Batangas)</option>
+            <option value="1.05">North Luzon High Irradiance Area</option>
           </select>
         </div>
 
         <div class="input-row">
           <div class="select-group">
-            <label class="section-label" style="margin-bottom: 0;">Approx. Roof Area*</label>
+            <label class="section-label" style="margin-bottom: 0;">Usable Roof Area (Est.)*</label>
             <select class="custom-select" id="roofAreaSelect">
-              <option value="auto">Auto calculate</option>
-              <option value="25">Up to 25 sq.m</option>
-              <option value="50">25 - 50 sq.m</option>
-              <option value="100">50 - 100 sq.m</option>
-              <option value="200">100+ sq.m</option>
+              <option value="auto">Auto-synced with Property</option>
+              <option value="20">10 - 25 sq.m</option>
+              <option value="35">25 - 50 sq.m</option>
+              <option value="75">50 - 100 sq.m</option>
+              <option value="150">100+ sq.m</option>
             </select>
           </div>
 
           <div class="select-group">
-            <label class="section-label" style="margin-bottom: 0;">No. of Devices / Inverters</label>
+            <label class="section-label" style="margin-bottom: 0;">No. of Inverters</label>
             <select class="custom-select" id="deviceCountSelect">
               <option value="1">1 Unit</option>
-              <option value="2">2 Units</option>
+              <option value="2">2 Units (Parallel)</option>
               <option value="3">3 Units</option>
             </select>
           </div>
@@ -471,19 +492,19 @@
           <div>
             <div class="card-value">
               <small>PHP</small>
-              <span id="savingsValue">15,000.00</span>
+              <span id="savingsValue">11,250.00</span>
             </div>
-            <div class="sub-note">Est. monthly savings based on ~PHP 12.00/kWh Meralco tariff</div>
+            <div class="sub-note">Est. monthly savings on Meralco bills (PHP 12.00/kWh)</div>
           </div>
         </div>
 
         <!-- Monthly Generation Card -->
         <div class="stat-card green">
-          <div class="card-title">Generation Value</div>
+          <div class="card-title">Generation Range</div>
           <div>
             <div class="card-value">
               <small>PHP</small>
-              <span id="generationValue">18,500.00</span>
+              <span id="generationValue">14,200.00</span>
             </div>
             <div class="sub-note">Includes +700 kWh/yr gain via HYXI 60V ultra-low voltage startup</div>
           </div>
@@ -491,10 +512,10 @@
 
         <!-- System Output Card -->
         <div class="stat-card blue">
-          <div class="card-title">System Size / Monthly Yield</div>
+          <div class="card-title">System Size</div>
           <div>
             <div class="card-value">
-              <span id="systemSizeValue">380.00</span>
+              <span id="systemSizeValue">300.00</span>
               <small>kWh</small>
             </div>
             <div class="sub-note" id="systemRatingText">Recommended: 6kW System (High-power 18A PV)</div>
@@ -505,10 +526,40 @@
   </div>
 
   <script>
-    // Configuration constants
-    const MERALCO_RATE_PER_KWH = 12.00; // Average Manila residential electricity rate
-    const PEAK_SUN_HOURS_PER_DAY = 4.2;  // Philippine average solar irradiance
-    const HYXI_BONUS_KWH_MONTHLY = 700 / 12; // Gain 1 hr daily = 700 kWh annually from 60V startup
+    // Property presets with usable roof sqm ranges
+    const PROPERTY_PRESETS = {
+      small: {
+        sqmRange: "15 - 35 sqm",
+        defaultBill: 8000,
+        sqmMedian: 25,
+        targetOffset: 0.70
+      },
+      big: {
+        sqmRange: "40 - 90 sqm",
+        defaultBill: 25000,
+        sqmMedian: 65,
+        targetOffset: 0.75
+      },
+      apartment: {
+        sqmRange: "10 - 25 sqm",
+        defaultBill: 5000,
+        sqmMedian: 18,
+        targetOffset: 0.60
+      },
+      enterprise: {
+        sqmRange: "100+ sqm",
+        defaultBill: 48000,
+        sqmMedian: 160,
+        targetOffset: 0.85
+      }
+    };
+
+    // Constants
+    const MERALCO_RATE = 12.00;
+    const PEAK_SUN_HOURS = 4.2;
+    const HYXI_BONUS_KWH_MONTHLY = 700 / 12; // +700 kWh/yr startup yield advantage
+
+    let currentProperty = "small";
 
     const billRange = document.getElementById("billRange");
     const billLabel = document.getElementById("billLabel");
@@ -518,10 +569,12 @@
     const systemRatingText = document.getElementById("systemRatingText");
     const skuTitle = document.getElementById("skuTitle");
     const skuDesc = document.getElementById("skuDesc");
+    const skuBadge = document.getElementById("skuBadge");
     const locationSelect = document.getElementById("locationSelect");
+    const roofAreaSelect = document.getElementById("roofAreaSelect");
     const deviceCountSelect = document.getElementById("deviceCountSelect");
     const radioDots = document.querySelectorAll(".radio-dot");
-    const typeButtons = document.querySelectorAll(".type-btn");
+    const propButtons = document.querySelectorAll(".prop-btn");
 
     function formatNumber(num) {
       return Number(num).toLocaleString("en-PH", {
@@ -534,62 +587,81 @@
       const bill = parseFloat(billRange.value);
       const locFactor = parseFloat(locationSelect.value) || 1.0;
       const deviceCount = parseInt(deviceCountSelect.value, 10) || 1;
+      const preset = PROPERTY_PRESETS[currentProperty];
 
-      // Update bill text
       billLabel.textContent = `Average Monthly Electricity Bill*: PHP ${Number(bill).toLocaleString("en-PH")}`;
 
-      // Radio dot state sync
+      // Update dot states
       radioDots.forEach(dot => {
         const val = parseFloat(dot.getAttribute("data-val"));
-        if (Math.abs(bill - val) < 2500) {
+        if (Math.abs(bill - val) < 3000) {
           dot.classList.add("selected");
         } else {
           dot.classList.remove("selected");
         }
       });
 
-      // Calculate monthly kWh consumed
-      const monthlyKwhConsumption = bill / MERALCO_RATE_PER_KWH;
-
-      // Target solar offset (65% typical daytime self-consumption + net metering)
-      const targetOffsetPercent = 0.65;
-      const targetMonthlySolarKwh = monthlyKwhConsumption * targetOffsetPercent * locFactor;
-
-      // Add HYXI startup boost (~58 kWh/month extra under low light conditions)
+      // Monthly consumption & solar generation
+      const monthlyKwhConsumption = bill / MERALCO_RATE;
+      const targetMonthlySolarKwh = monthlyKwhConsumption * preset.targetOffset * locFactor;
       const totalEstimatedMonthlyKwh = targetMonthlySolarKwh + (HYXI_BONUS_KWH_MONTHLY * deviceCount);
 
-      // System peak capacity needed (kWp)
+      // System peak capacity (kWp)
       const dailyKwh = totalEstimatedMonthlyKwh / 30;
-      const kwCapacity = dailyKwh / PEAK_SUN_HOURS_PER_DAY;
+      const kwCapacity = dailyKwh / PEAK_SUN_HOURS;
 
-      // Monthly savings & generation financial value
-      const calculatedSavings = Math.min(bill * 0.72, totalEstimatedMonthlyKwh * MERALCO_RATE_PER_KWH);
-      const totalGenValue = totalEstimatedMonthlyKwh * MERALCO_RATE_PER_KWH;
+      // Financials
+      const monthlySavings = Math.min(bill * 0.75, totalEstimatedMonthlyKwh * MERALCO_RATE * preset.targetOffset);
+      const totalGenValue = totalEstimatedMonthlyKwh * MERALCO_RATE;
 
-      // Update DOM
-      savingsValue.textContent = formatNumber(calculatedSavings);
+      // Update DOM values
+      savingsValue.textContent = formatNumber(monthlySavings);
       generationValue.textContent = formatNumber(totalGenValue);
       systemSizeValue.textContent = formatNumber(totalEstimatedMonthlyKwh);
 
-      // Adapt SKU recommendations based on required kW
-      if (kwCapacity <= 5) {
+      // Map dynamic HYXI SKU from catalog
+      if (kwCapacity <= 2.5) {
+        skuTitle.textContent = "M800/1000-SW";
+        skuDesc.textContent = "HYXI Microinverter (2-in-1 Dual MPPT)";
+        skuBadge.textContent = "20V Low Startup | Balcony & Small Roofs";
+        systemRatingText.textContent = `Recommended: ~${kwCapacity.toFixed(1)} kWp (${Math.ceil(kwCapacity * 1.6)}x 600W/700W Panels)`;
+      } else if (kwCapacity <= 5.5) {
         skuTitle.textContent = "H5K/6K-LS";
-        skuDesc.textContent = "HYXI residential single-phase low-voltage hybrid inverter";
-        systemRatingText.textContent = `Recommended: ~${kwCapacity.toFixed(1)} kW System (${Math.ceil(kwCapacity * 1.5)}x 700W 18A Panels)`;
-      } else if (kwCapacity <= 10) {
+        skuDesc.textContent = "HYXI Residential Low-Voltage Hybrid Inverter";
+        skuBadge.textContent = "60V Low Startup | 18A High Current";
+        systemRatingText.textContent = `Recommended: ~${kwCapacity.toFixed(1)} kWp (${Math.ceil(kwCapacity * 1.5)}x 700W Panels)`;
+      } else if (kwCapacity <= 12) {
         skuTitle.textContent = "H6K/8K-LS";
-        skuDesc.textContent = "HYXI high-density low-voltage hybrid inverter (Up to 18x 700W modules)";
-        systemRatingText.textContent = `Recommended: ~${kwCapacity.toFixed(1)} kW System (${Math.ceil(kwCapacity * 1.5)}x 700W 18A Panels)`;
+        skuDesc.textContent = "HYXI High-Density Low-Voltage Hybrid Inverter";
+        skuBadge.textContent = "Sustained 80% Output at 55°C | 18x 700W Modules";
+        systemRatingText.textContent = `Recommended: ~${kwCapacity.toFixed(1)} kWp (${Math.ceil(kwCapacity * 1.5)}x 700W Panels)`;
       } else {
-        skuTitle.textContent = "H10K/12K-LS High-Capacity";
-        skuDesc.textContent = "HYXI multi-unit / commercial low-voltage inverter cluster";
-        systemRatingText.textContent = `Recommended: ~${kwCapacity.toFixed(1)} kW System (${deviceCount}x Units in parallel)`;
+        skuTitle.textContent = "H50K-125K-ET / Halo ESS";
+        skuDesc.textContent = "HYXI Commercial Three-Phase Hybrid / High-Capacity ESS";
+        skuBadge.textContent = "100% DoD | Multi-Unit Parallel Support";
+        systemRatingText.textContent = `Recommended: ~${kwCapacity.toFixed(1)} kWp (${deviceCount}x Units in Parallel)`;
       }
     }
 
-    // Event listeners
+    // Property Type Click Handler
+    propButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        propButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        currentProperty = btn.getAttribute("data-type");
+        const preset = PROPERTY_PRESETS[currentProperty];
+
+        billRange.value = preset.defaultBill;
+
+        calculateMetrics();
+      });
+    });
+
+    // Event Listeners
     billRange.addEventListener("input", calculateMetrics);
     locationSelect.addEventListener("change", calculateMetrics);
+    roofAreaSelect.addEventListener("change", calculateMetrics);
     deviceCountSelect.addEventListener("change", calculateMetrics);
 
     radioDots.forEach(dot => {
@@ -599,22 +671,7 @@
       });
     });
 
-    typeButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        typeButtons.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-
-        const type = btn.getAttribute("data-type");
-        if (type === "small") billRange.value = 8000;
-        else if (type === "big") billRange.value = 25000;
-        else if (type === "apartment") billRange.value = 5000;
-        else if (type === "enterprise") billRange.value = 48000;
-
-        calculateMetrics();
-      });
-    });
-
-    // Run initial calculation
+    // Initial calculation call
     calculateMetrics();
   </script>
 </body>

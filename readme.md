@@ -1,97 +1,116 @@
-# HYXI Solar Savings Calculator — Technical & Calculation Reference
+# HYXiPOWER Solar Savings Calculator
 
-This documentation details the mathematical modeling, baseline electrical parameters, and product specifications utilized in the HYXI Solar Savings Calculator tailored for the Philippine market (Meralco grid).
+A native HTML5, CSS3, and vanilla JavaScript solar savings and sizing calculator customized for the Philippine market under Manila Electric Company (Meralco) distribution utility pricing.
 
----
-
-## 1. Core Technical Constants & Baseline Inputs
-
-| Parameter | Value | Reference / Technical Basis |
-| :--- | :--- | :--- |
-| **Meralco Electricity Tariff** | `PHP 12.00 / kWh` | Effective average residential / small commercial benchmark including generation, transmission, distribution, taxes, and FIT-All charges. |
-| **Peak Sun Hours (PSH)** | `4.2 hrs / day` | National average Philippine solar irradiance factor (Central Luzon / Metro Manila solar window). |
-| **Target Solar Offset** | `65%` | Standard residential direct daytime consumption ratio combined with net-metering export offsets. |
-| **HYXI Startup Energy Bonus** | `~58.33 kWh / month`<br>*(700 kWh / yr / unit)* | Extra harvest generated via HYXI's **60V ultra-low startup voltage**, delivering +1 extra operating hour per day during dawn, dusk, and low-light weather. |
-| **Days in Month Benchmark** | `30 days` | Standard utility billing month normalization. |
+The calculator maps monthly electricity spend directly to **Property Types with defined usable rooftop area ranges (sqm)**, recommending matching **HYXI Inverter SKUs** (Residential Hybrid Inverters, Microinverters, and Commercial Energy Storage Systems) while accounting for hardware-level advantages such as 60V ultra-low voltage startup and high-current PV module pairing.
 
 ---
 
-## 2. Calculation Breakdown & Formulas
+## 1. Property Type & Usable Rooftop Area Matrix
 
-### Step 1: Baseline Monthly Energy Demand
-To convert the customer's monthly monetary utility bill into actual energy consumption:
+The calculator uses preset rooftop area ranges and consumption profiles to determine optimal system capacity:
 
-$$\text{Monthly Consumption (kWh)} = \frac{\text{Monthly Bill (PHP)}}{\text{Tariff Rate (PHP 12.00)}}$$
-
-*Example: A monthly bill of $\text{PHP } 25,000$ equates to:*
-$$\frac{25,000}{12.00} = 2,083.33 \text{ kWh/month}$$
-
----
-
-### Step 2: Regional Irradiance Adjustment
-Regional irradiance variations are accounted for using an empirical location factor ($L_f$):
-* **Metro Manila (Meralco Grid):** $1.00$
-* **Central Luzon (Bulacan / Pampanga):** $1.02$
-* **Calabarzon (Cavite / Laguna / Batangas):** $0.98$
-* **North Luzon:** $1.05$
-
-$$\text{Target Base PV Yield (kWh)} = \text{Monthly Consumption} \times \text{Target Offset (0.65)} \times L_f$$
+| Property Type | Usable Rooftop Area | Typical PV Capacity (700W Modules) | Default Monthly Bill | Primary HYXI Inverter Pairing |
+| :--- | :--- | :--- | :--- | :--- |
+| **Small Home** | **15 - 35 sqm** | 4 to 10 panels (~2.8 kWp to 7.0 kWp) | PHP 8,000 | `H5K/6K-LS` Residential Hybrid |
+| **Big Home** | **40 - 90 sqm** | 12 to 24 panels (~8.4 kWp to 16.8 kWp) | PHP 25,000 | `H6K/8K-LS` High-Density Hybrid |
+| **Apartment** | **10 - 25 sqm** | 2 to 6 panels (~1.4 kWp to 4.2 kWp) | PHP 5,000 | `M800/1000-SW` Dual Microinverter |
+| **Enterprise** | **100+ sqm** | 28+ panels (~19.6 kWp+) | PHP 48,000 | `H50K-125K-ET` Three-Phase / Halo ESS |
 
 ---
 
-### Step 3: HYXI Inverter Edge Integration
-HYXI low-voltage hybrid inverters trigger power generation at **60V**, compared to 90V–120V on standard market inverters. This captures approximately 1 additional hour of irradiance daily:
+## 2. Philippine Energy & Sizing Benchmarks
 
-$$\text{Annual Boost} = 700 \text{ kWh / unit} \implies \text{Monthly Boost} = \frac{700}{12} \approx 58.33 \text{ kWh / unit}$$
+### A. Meralco Retail Electricity Tariff
+* **Benchmark Rate ($R$):** `PHP 12.00 / kWh` (blended residential/commercial benchmark reflecting generation, transmission, distribution, system loss, and VAT).
 
-$$\text{Total Monthly Solar Generation (kWh)} = \text{Target Base PV Yield} + (58.33 \times N_{\text{devices}})$$
+### B. Solar Irradiance & Peak Sun Hours (PSH)
+* **Average Philippine Daily Irradiance ($PSH$):** `4.2 Peak Sun Hours / day`
+* **Billing Period ($D$):** `30 Days / month`
 
-This metric directly populates the **System Size / Monthly Yield** display card (`kWh`).
+### C. Location Derating Multipliers ($F_{\text{loc}}$)
+* **Metro Manila (Meralco Main):** `1.00`
+* **Central Luzon (Bulacan / Pampanga):** `1.03` (higher open-plain solar yield)
+* **CALABARZON (Cavite / Laguna / Batangas):** `0.97`
+* **North Luzon High Irradiance Area:** `1.05`
 
----
-
-### Step 4: Required DC Capacity & Recommended Hardware
-The system calculates required panel sizing to fulfill this generation:
-
-$$\text{Daily Required (kWh)} = \frac{\text{Total Monthly Solar Generation}}{30}$$
-
-$$\text{Required kWp} = \frac{\text{Daily Required}}{\text{PSH (4.2)}}$$
-
-#### Module Sizing (18A High-Power Modules)
-Because HYXI inverters support **18A high-current input**, systems are matched with modern high-efficiency 700W PV modules:
-$$\text{Module Count} = \left\lceil \frac{\text{Required kWp} \times 1,000\text{ W}}{700\text{ W}} \right\rceil$$
+### D. HYXI Low-Voltage Generation Advantage
+* **Ultra-Low 60V Startup:** Operates earlier at dawn and later into dusk, adding an estimated `+700 kWh/year` (~`58.33 kWh/month`) per inverter unit.
+* **18A High PV Input Current:** Fully compatible with modern high-power 650W-700W solar modules without current clipping.
+* **Extreme Heat Derating Performance:** Maintains 80% sustained output power even at 55°C ambient temperature.
 
 ---
 
-### Step 5: Recommended Inverter SKU Mapping
+## 3. Mathematical Models & Formulas
 
-Depending on the calculated peak capacity ($\text{kWp}$):
+### Step 1: Baseline Monthly Energy Consumption ($E_{\text{cons}}$)
+Determined by dividing the user's monthly Meralco bill by the benchmark tariff:
 
-* **$\le 5.0\text{ kWp}$:** `H5K/6K-LS` Single-Phase Low-Voltage Inverter
-* **$5.1\text{ kWp} - 10.0\text{ kWp}$:** `H6K/8K-LS` High-Density Hybrid Inverter (supports up to $18\times\text{700W}$ modules)
-* **$> 10.0\text{ kWp}$:** `H10K/12K-LS` Multi-Inverter Parallel Architecture
+$$E_{\text{cons}} = \frac{\text{Monthly Bill (PHP)}}{R}$$
+
+### Step 2: Target Monthly Solar Output ($E_{\text{gen}}$)
+Accounts for property self-consumption capacity, environmental multipliers, and the HYXI startup advantage:
+
+$$E_{\text{gen}} = \left( E_{\text{cons}} \times \eta_{\text{offset}} \times F_{\text{loc}} \right) + \left( E_{\text{startup}} \times N_{\text{units}} \right)$$
+
+*Where:*
+* $\eta_{\text{offset}}$ = Target daytime offset percentage (60% to 85% depending on property scale).
+* $E_{\text{startup}}$ = `58.33 kWh/month` (HYXI 60V early startup gain).
+* $N_{\text{units}}$ = Selected inverter count.
+
+### Step 3: Required Peak System Sizing ($P_{\text{capacity}}$)
+Calculates the DC system size in Kilowatts-peak (kWp) needed to produce the target monthly generation:
+
+$$P_{\text{capacity}} = \frac{E_{\text{gen}} / D}{PSH} = \frac{E_{\text{gen}}}{30 \times 4.2}$$
+
+### Step 4: Estimated Monthly Savings (PHP)
+Calculated from avoided Meralco grid purchases:
+
+$$\text{Savings} = \min\left( \text{Bill} \times 0.75, \; E_{\text{gen}} \times R \times \eta_{\text{offset}} \right)$$
+
+*A conservative 75% cap is applied to protect against fixed distribution and meter fees.*
+
+### Step 5: Gross Generation Financial Value (PHP)
+Represents the total retail replacement value of all generated energy:
+
+$$\text{Generation Value} = E_{\text{gen}} \times R$$
+
+### Step 6: Module Count & Inverter Sizing
+* **Module Count:** Estimated for 650W-700W modules:
+  $$\text{Module Count} = \lceil P_{\text{capacity}} \times 1.5 \rceil$$
+* **SKU Selection:** Dynamically mapped based on system capacity:
+  * $\le 2.5\text{ kWp}$: `M800/1000-SW` Microinverter
+  * $2.6 - 5.5\text{ kWp}$: `H5K/6K-LS` Residential Hybrid
+  * $5.6 - 12.0\text{ kWp}$: `H6K/8K-LS` High-Density Hybrid
+  * $> 12.0\text{ kWp}$: `H50K-125K-ET` Three-Phase / Halo Modular ESS
 
 ---
 
-### Step 6: Financial Savings & Value Formulation
+## 4. Architecture & Reactive Pipeline
 
-1. **Generation Value (Green Card):**
-   The total economic value of electricity generated by the solar system:
-   $$\text{Generation Value (PHP)} = \text{Total Monthly Solar Generation (kWh)} \times 12.00$$
+### User Inputs
+* **Property Type:** Small Home, Big Home, Apartment, Enterprise
+* **Area Tag Indicator:** 15-35 sqm, 40-90 sqm, 10-25 sqm, 100+ sqm
+* **Monthly Electricity Bill Slider:** PHP 2,000 to PHP 60,000
+* **Location / Grid Utility Dropdown:** Regional irradiance factors
+* **Inverter Device Count:** Number of parallel units
 
-2. **Savings Range (Black Card):**
-   Estimated net reduction on the consumer's bill, factoring in utility grid connection minimums and net-metering compensation tariffs (capped conservatively at 72% maximum bill reduction without battery cycling adjustments):
-   $$\text{Monthly Savings (PHP)} = \min\left(\text{Monthly Bill} \times 0.72,\; \text{Total Monthly Solar Generation} \times 12.00\right)$$
+### Calculation Engine
+* Evaluates consumption via Meralco benchmark (PHP 12.00/kWh)
+* Factors in daily peak sun hours (4.2 PSH)
+* Applies HYXI 60V low-voltage yield bonus (+58.33 kWh/month)
+* Computes kWp capacity and matches hardware SKU
+
+### UI Metric Display Cards
+* **Savings Range Card (Black Card):** Estimated monthly bill savings in PHP
+* **Generation Range Card (Green Card):** Total financial generation value plus startup yield note
+* **System Size Card (Blue Card):** Total estimated monthly kWh yield and recommended hardware sizing
+* **Preferred SKU Card:** Dynamic inverter model name, description, and feature badges
 
 ---
 
-## 3. UI Preset Mapping
+## 5. Deployment Notes
 
-Clicking property presets automatically shifts the bill slider to typical benchmark values:
-
-| Property Preset | Baseline Default Bill | Typical System Sizing |
-| :--- | :--- | :--- |
-| **Small Home** | `PHP 8,000` | $\sim 3.8\text{ kWp}$ |
-| **Big Home** | `PHP 25,000` | $\sim 8.0\text{ kWp}$ (H6K/8K-LS) |
-| **Apartment** | `PHP 5,000` | $\sim 2.5\text{ kWp}$ |
-| **Enterprise** | `PHP 48,000` | $\sim 15.0\text{ kWp}$ (Parallel Cluster) |
+* **Zero Dependencies:** Pure HTML5, CSS3, and vanilla JavaScript without external libraries or build chains.
+* **Embed Ready:** Easily drop into a Webflow custom code embed block, a WordPress custom HTML block, or any static hosting environment.
+* **Fully Responsive:** CSS Grid layout shifts cleanly from a two-column desktop arrangement to a single-column stacked view on screens below 860px width.
